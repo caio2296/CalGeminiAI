@@ -68,7 +68,7 @@ export const CodeViewer: React.FC<CodeViewerProps> = ({ onTestInTerminal }) => {
         if (/^\d+(\.\d+)?$/.test(word)) {
           return <span key={wIdx} className="text-orange-300">{word}</span>;
         }
-        if (/^(somar|subtrair|multiplicar|dividir|calcular|ler_numero)$/.test(word)) {
+        if (/^(somar|subtrair|multiplicar|dividir|porcentagem|calcular|ler_numero)$/.test(word)) {
           return <span key={wIdx} className="text-teal-300">{word}</span>;
         }
         return <span key={wIdx}>{word}</span>;

@@ -20,7 +20,7 @@ export const PYTHON_CODE_LEVELS: PythonCodeLevel[] = [
     id: 'basic',
     title: 'Nível 1: Essencial & Direto',
     subtitle: 'Funções simples, input() e condicionais if/elif/else',
-    description: 'A versão ideal para quem está escrevendo suas primeiras linhas de código em Python. Mostra claramente cada uma das 4 operações em funções separadas.',
+    description: 'A versão ideal para quem está escrevendo suas primeiras linhas de código em Python. Mostra claramente cada uma das 5 operações em funções separadas.',
     code: `# ==========================================
 # CALCULADORA BÁSICA EM PYTHON (NÍVEL 1)
 # ==========================================
@@ -41,10 +41,14 @@ def dividir(a, b):
         return "Erro: Não é possível dividir por zero!"
     return a / b
 
+def porcentagem(a, b):
+    # Calcula b% de a: exemplo: 15% de 200 = (200 * 15) / 100 = 30
+    return (a * b) / 100
+
 # 2. ENTRADA DE DADOS DO USUÁRIO
 print("=== CALCULADORA SIMPLES ===")
 num1 = float(input("Digite o primeiro número: "))
-operacao = input("Digite a operação (+, -, *, /): ")
+operacao = input("Digite a operação (+, -, *, /, %): ")
 num2 = float(input("Digite o segundo número: "))
 
 # 3. VERIFICAÇÃO DA OPERAÇÃO E CÁLCULO
@@ -56,6 +60,8 @@ elif operacao == '*':
     resultado = multiplicar(num1, num2)
 elif operacao == '/':
     resultado = dividir(num1, num2)
+elif operacao == '%':
+    resultado = porcentagem(num1, num2)
 else:
     resultado = "Operação inválida!"
 
@@ -65,35 +71,42 @@ print(f"Resultado de {num1} {operacao} {num2} = {resultado}")
 print("===========================")`,
     explanations: [
       {
-        lineRange: [6, 19],
+        lineRange: [6, 23],
         title: 'Funções com def e return',
         concept: 'Modularização e Reutilização de Código',
         tag: 'def & return',
         explanation: 'A palavra-chave "def" cria uma função. Cada função recebe dois parâmetros (a e b) e usa "return" para devolver o valor calculado a quem a chamou. Separar cada operação em sua própria função deixa o código limpo, fácil de testar e bem organizado.'
       },
       {
-        lineRange: [16, 18],
+        lineRange: [16, 19],
         title: 'Proteção contra Divisão por Zero',
         concept: 'Validação Matemática',
         tag: 'if b == 0',
         explanation: 'Na matemática e na computação, dividir qualquer número por 0 é indefinido e geraria um erro fatal (ZeroDivisionError) que travaria o programa. Por isso, checamos antes com "if b == 0:" e retornamos uma mensagem amigável.'
       },
       {
-        lineRange: [22, 25],
+        lineRange: [21, 23],
+        title: 'Cálculo de Porcentagem',
+        concept: 'Lógica Matemática em Funções',
+        tag: 'porcentagem(a, b)',
+        explanation: 'A função porcentagem(a, b) calcula "b porcento de a" através da fórmula (a * b) / 100. Por exemplo, porcentagem(200, 15) calcula 15% de 200, retornando 30.0.'
+      },
+      {
+        lineRange: [26, 29],
         title: 'Entrada de Dados com input() e float()',
         concept: 'Conversão de Tipos (Type Casting)',
         tag: 'input() & float()',
         explanation: 'A função input() sempre lê dados do teclado como texto (string). Se somássemos "5" + "3", o resultado seria "53" (concatenação de texto!). A função float() converte o texto para número decimal com vírgula (ponto flutuante), permitindo operações com inteiros (4) e decimais (4.5).'
       },
       {
-        lineRange: [28, 38],
+        lineRange: [32, 43],
         title: 'Estrutura Condicional (if / elif / else)',
         concept: 'Tomada de Decisão',
         tag: 'if / elif / else',
-        explanation: 'O programa precisa saber qual função chamar com base no símbolo digitado pelo usuário. O "if" testa a primeira opção (+), os "elif" (else if) testam as alternativas subsequentes (-, *, /), e o "else" captura qualquer entrada não reconhecida.'
+        explanation: 'O programa precisa saber qual função chamar com base no símbolo digitado pelo usuário. O "if" testa a primeira opção (+), os "elif" (else if) testam as alternativas subsequentes (-, *, /, %), e o "else" captura qualquer entrada não reconhecida.'
       },
       {
-        lineRange: [42, 44],
+        lineRange: [46, 48],
         title: 'Saída com f-string',
         concept: 'Formatação Moderna de Texto',
         tag: 'f"..."',
@@ -124,6 +137,9 @@ def dividir(a, b):
         return "Erro: Impossível dividir por zero!"
     return a / b
 
+def porcentagem(a, b):
+    return (a * b) / 100
+
 # LOOP PRINCIPAL: O programa roda até o usuário escolher sair
 while True:
     print("\\n" + "=" * 30)
@@ -133,16 +149,17 @@ while True:
     print("2. Subtração (-)")
     print("3. Multiplicação (*)")
     print("4. Divisão (/)")
-    print("5. Sair do Programa")
+    print("5. Porcentagem (%)")
+    print("6. Sair do Programa")
     print("=" * 30)
     
-    opcao = input("Escolha uma opção (1 a 5): ")
+    opcao = input("Escolha uma opção (1 a 6): ")
     
-    if opcao == '5':
+    if opcao == '6':
         print("\\nObrigado por usar a calculadora! Até logo.")
         break  # Interrompe o loop while imediatamente
         
-    if opcao in ['1', '2', '3', '4']:
+    if opcao in ['1', '2', '3', '4', '5']:
         num1 = float(input("Digite o 1º número: "))
         num2 = float(input("Digite o 2º número: "))
         
@@ -154,29 +171,31 @@ while True:
             print(f"\\n>>> {num1} * {num2} = {multiplicar(num1, num2)}")
         elif opcao == '4':
             print(f"\\n>>> {num1} / {num2} = {dividir(num1, num2)}")
+        elif opcao == '5':
+            print(f"\\n>>> {num2}% de {num1} = {porcentagem(num1, num2)}")
     else:
-        print("\\n[!] Opção inválida! Digite um número de 1 a 5.")`,
+        print("\\n[!] Opção inválida! Digite um número de 1 a 6.")`,
     explanations: [
       {
-        lineRange: [21, 21],
+        lineRange: [23, 23],
         title: 'Loop infinito com while True',
         concept: 'Estrutura de Repetição',
         tag: 'while True',
         explanation: '"while True" cria um loop que se repete infinitamente até encontrar uma instrução "break". Isso é comum em menus de console, jogos e ferramentas interativas, pois mantém a aplicação ativa até que o usuário decida encerrar.'
       },
       {
-        lineRange: [34, 36],
+        lineRange: [37, 39],
         title: 'Comando break para sair',
         concept: 'Controle de Fluxo',
         tag: 'break',
-        explanation: 'Quando o usuário digita "5", a instrução "break" é executada. Ela sai do bloco "while" imediatamente e encerra a execução do script com segurança.'
+        explanation: 'Quando o usuário digita "6", a instrução "break" é executada. Ela sai do bloco "while" imediatamente e encerra a execução do script com segurança.'
       },
       {
-        lineRange: [38, 38],
+        lineRange: [41, 41],
         title: 'Validação com o operador in',
         concept: 'Operador de Pertencimento (in)',
         tag: 'opcao in [...]',
-        explanation: 'Em vez de escrever "if opcao == 1 or opcao == 2 or ...", usamos a lista "if opcao in [\'1\', \'2\', \'3\', \'4\']:". É um jeito pythônico, elegante e muito mais legível de validar se um valor está dentro de um grupo permitido.'
+        explanation: 'Em vez de escrever "if opcao == 1 or opcao == 2 or ...", usamos a lista "if opcao in [\'1\', \'2\', \'3\', \'4\', \'5\']:". É um jeito pythônico, elegante e muito mais legível de validar se um valor está dentro de um grupo permitido.'
       }
     ]
   },
@@ -201,6 +220,8 @@ def calcular(num1, operacao, num2):
         if num2 == 0:
             raise ZeroDivisionError("Não é permitido dividir por zero.")
         return num1 / num2
+    elif operacao == '%':
+        return (num1 * num2) / 100
     else:
         raise ValueError(f"Operação '{operacao}' não reconhecida.")
 
@@ -216,7 +237,7 @@ def ler_numero(mensagem):
 print("=== CALCULADORA ROBUSTA EM PYTHON ===")
 try:
     n1 = ler_numero("Digite o primeiro número: ")
-    op = input("Operação desejada (+, -, *, /): ").strip()
+    op = input("Operação desejada (+, -, *, /, %): ").strip()
     n2 = ler_numero("Digite o segundo número: ")
     
     resultado = calcular(n1, op, n2)
@@ -232,21 +253,21 @@ finally:
     print("\\nFim da operação.")`,
     explanations: [
       {
-        lineRange: [14, 17],
+        lineRange: [14, 20],
         title: 'Lançando Exceções com raise',
         concept: 'Disparo de Erros Semânticos',
         tag: 'raise',
         explanation: 'O comando "raise" gera intencionalmente uma exceção específica quando uma regra de negócio ou matemática é violada (ex: ZeroDivisionError ou ValueError), permitindo que a camada de exibição trate o problema.'
       },
       {
-        lineRange: [22, 26],
+        lineRange: [24, 28],
         title: 'Capturando Erros de Conversão com try/except',
         concept: 'Tratamento de Exceções',
         tag: 'try...except',
         explanation: 'Se o usuário digitar a palavra "olá" quando o programa espera um float, o Python normalmente dispararia um "ValueError" e abortaria o programa. Com o bloco "try ... except ValueError:", interceptamos o erro e pedimos educadamente que ele digite novamente.'
       },
       {
-        lineRange: [38, 44],
+        lineRange: [40, 47],
         title: 'Captura Específica e Bloco finally',
         concept: 'Resiliência e Limpeza',
         tag: 'except & finally',

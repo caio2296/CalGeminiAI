@@ -80,12 +80,12 @@ export const InteractiveTerminal: React.FC = () => {
       setLines((prev) => [
         ...prev,
         { id: Date.now() + '-inp', type: 'input', text: val },
-        { id: Date.now() + '-p', type: 'prompt', text: 'Digite a operação (+, -, *, /): ' }
+        { id: Date.now() + '-p', type: 'prompt', text: 'Digite a operação (+, -, *, /, %): ' }
       ]);
       setStep('waiting_op');
       setCurrentInput('');
     } else if (step === 'waiting_op') {
-      const validOps = ['+', '-', '*', '/'];
+      const validOps = ['+', '-', '*', '/', '%'];
       setMemory((prev) => ({ ...prev, operacao: val }));
       
       const nextLines: TerminalLine[] = [
@@ -97,7 +97,7 @@ export const InteractiveTerminal: React.FC = () => {
         nextLines.push({
           id: Date.now() + '-warn',
           type: 'error',
-          text: `Aviso: '${val}' não é uma das 4 operações padrão (+, -, *, /). O script prosseguirá para mostrar a validação do 'else'.`
+          text: `Aviso: '${val}' não é uma das 5 operações padrão (+, -, *, /, %). O script prosseguirá para mostrar a validação do 'else'.`
         });
       }
 
@@ -141,6 +141,9 @@ export const InteractiveTerminal: React.FC = () => {
         } else {
           res = n1 / n2;
         }
+      } else if (op === '%') {
+        funcName = 'porcentagem(a, b)';
+        res = (n1 * n2) / 100;
       } else {
         funcName = 'else (operação inválida)';
         res = 'Operação inválida!';
@@ -194,6 +197,9 @@ export const InteractiveTerminal: React.FC = () => {
       } else {
         res = num1 / num2;
       }
+    } else if (op === '%') {
+      funcName = 'porcentagem(a, b)';
+      res = (num1 * num2) / 100;
     }
 
     setMemory({
@@ -210,7 +216,7 @@ export const InteractiveTerminal: React.FC = () => {
       { id: Date.now() + '-1', type: 'system', text: '$ python calculadora.py' },
       { id: Date.now() + '-2', type: 'output', text: '=== CALCULADORA SIMPLES ===' },
       { id: Date.now() + '-3', type: 'prompt', text: `Digite o primeiro número: ${num1}` },
-      { id: Date.now() + '-4', type: 'prompt', text: `Digite a operação (+, -, *, /): ${op}` },
+      { id: Date.now() + '-4', type: 'prompt', text: `Digite a operação (+, -, *, /, %): ${op}` },
       { id: Date.now() + '-5', type: 'prompt', text: `Digite o segundo número: ${num2}` },
       { id: Date.now() + '-6', type: 'output', text: '---------------------------' },
       { id: Date.now() + '-7', type: isError ? 'error' : 'success', text: `Resultado de ${num1} ${op} ${num2} = ${res}` },
@@ -265,6 +271,13 @@ export const InteractiveTerminal: React.FC = () => {
             className="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 text-[11px] whitespace-nowrap"
           >
             3.5 * 4
+          </button>
+          <button
+            onClick={() => runPreset(200, '%', 15)}
+            className="px-2.5 py-1 rounded bg-amber-950/60 hover:bg-amber-900/60 text-amber-300 border border-amber-800/80 text-[11px] whitespace-nowrap font-medium"
+            title="Calcular 15% de 200"
+          >
+            200 % 15 (30)
           </button>
         </div>
       </div>
@@ -329,7 +342,7 @@ export const InteractiveTerminal: React.FC = () => {
                     step === 'waiting_num1'
                       ? 'Digite um número (ex: 12)'
                       : step === 'waiting_op'
-                      ? 'Digite +, -, * ou /'
+                      ? 'Digite +, -, *, / ou %'
                       : 'Digite o segundo número (ex: 4)'
                   }
                   className="flex-1 bg-slate-900 text-amber-300 border border-slate-700 rounded px-2.5 py-1.5 outline-none focus:border-amber-400 font-mono text-xs placeholder:text-slate-600"

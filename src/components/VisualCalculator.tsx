@@ -4,7 +4,7 @@ import { Calculator, Play, RotateCcw, AlertTriangle, ArrowRight, Code2 } from 'l
 export const VisualCalculator: React.FC = () => {
   const [displayValue, setDisplayValue] = useState('0');
   const [prevValue, setPrevValue] = useState<number | null>(null);
-  const [operation, setOperation] = useState<'+' | '-' | '*' | '/' | null>(null);
+  const [operation, setOperation] = useState<'+' | '-' | '*' | '/' | '%' | null>(null);
   const [waitingForOperand, setWaitingForOperand] = useState(false);
   const [lastEquation, setLastEquation] = useState<string>('');
   const [pythonTrace, setPythonTrace] = useState<{
@@ -15,7 +15,7 @@ export const VisualCalculator: React.FC = () => {
     isError: boolean;
   }>({
     codeSnippet: `# Pressione os botões da calculadora para ver o código Python correspondente!
-# Exemplo: digite um número, escolha o operador (+, -, *, /) e tecle =`,
+# Exemplo: digite um número, escolha o operador (+, -, *, /, %) e tecle =`,
     explanation: 'Aguardando operação...',
     functionCalled: 'Nenhuma',
     returnValue: '-',
@@ -60,7 +60,7 @@ num2 = None`,
     });
   };
 
-  const selectOperation = (op: '+' | '-' | '*' | '/') => {
+  const selectOperation = (op: '+' | '-' | '*' | '/' | '%') => {
     const current = parseFloat(displayValue);
 
     if (prevValue !== null && operation && !waitingForOperand) {
@@ -76,14 +76,17 @@ num2 = None`,
       '+': 'somar',
       '-': 'subtrair',
       '*': 'multiplicar',
-      '/': 'dividir'
+      '/': 'dividir',
+      '%': 'porcentagem'
     };
 
     setPythonTrace({
       codeSnippet: `num1 = float("${current}")  # ${current}
 operacao = "${op}"
 # Aguardando segundo número para chamar: ${funcMap[op]}(num1, num2)`,
-      explanation: `Operação selecionada: ${op}. O primeiro número (${current}) foi armazenado na variável num1.`,
+      explanation: op === '%'
+        ? `Operação selecionada: Porcentagem (%). O valor base (${current}) foi armazenado na variável num1.`
+        : `Operação selecionada: ${op}. O primeiro número (${current}) foi armazenado na variável num1.`,
       functionCalled: `${funcMap[op]}() pendente`,
       returnValue: 'Aguardando num2',
       isError: false
@@ -120,6 +123,10 @@ operacao = "${op}"
           result = n1 / n2;
         }
         break;
+      case '%':
+        funcName = 'porcentagem';
+        result = (n1 * n2) / 100;
+        break;
     }
 
     setLastEquation(`${n1} ${operation} ${n2} =`);
@@ -154,11 +161,13 @@ operacao = "${operation}"
 
 # Chamada da função correspondente:
 def ${funcName}(a, b):
-    return a ${operation} b
+    ${operation === '%' ? 'return (a * b) / 100  # Calcula b% de a' : `return a ${operation} b`}
 
 resultado = ${funcName}(${n1}, ${n2})
 print(f"Resultado: {resultado}")  # Saída: ${cleanResult}`,
-        explanation: `A função ${funcName}() foi executada com argumentos a=${n1} e b=${n2}, retornando ${cleanResult}.`,
+        explanation: operation === '%'
+          ? `A função porcentagem() foi executada para calcular ${n2}% de ${n1}, retornando ${cleanResult}.`
+          : `A função ${funcName}() foi executada com argumentos a=${n1} e b=${n2}, retornando ${cleanResult}.`,
         functionCalled: `${funcName}(${n1}, ${n2})`,
         returnValue: String(cleanResult),
         isError: false
@@ -199,9 +208,19 @@ print(f"Resultado: {resultado}")  # Saída: ${cleanResult}`,
             {/* Row 1 */}
             <button
               onClick={clearAll}
-              className="col-span-2 py-3 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-rose-300 font-semibold text-sm transition-colors"
+              className="py-3 px-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-rose-300 font-semibold text-sm transition-colors"
+              title="Limpar visor (C)"
             >
-              C (Limpar)
+              C
+            </button>
+            <button
+              onClick={() => selectOperation('%')}
+              className={`py-3 px-3 rounded-xl font-bold text-base transition-colors ${
+                operation === '%' ? 'bg-amber-400 text-slate-950' : 'bg-sky-950/80 hover:bg-sky-900/80 text-sky-300 border border-sky-800/60'
+              }`}
+              title="Porcentagem (%)"
+            >
+              %
             </button>
             <button
               onClick={() => {
@@ -211,15 +230,17 @@ print(f"Resultado: {resultado}")  # Saída: ${cleanResult}`,
                   setDisplayValue('0');
                 }
               }}
-              className="py-3 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium text-sm transition-colors"
+              className="py-3 px-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium text-sm transition-colors"
+              title="Apagar dígito (Backspace)"
             >
               ⌫
             </button>
             <button
               onClick={() => selectOperation('/')}
-              className={`py-3 px-4 rounded-xl font-bold text-base transition-colors ${
+              className={`py-3 px-3 rounded-xl font-bold text-base transition-colors ${
                 operation === '/' ? 'bg-amber-400 text-slate-950' : 'bg-sky-950/80 hover:bg-sky-900/80 text-sky-300 border border-sky-800/60'
               }`}
+              title="Divisão (÷)"
             >
               ÷
             </button>
@@ -248,6 +269,7 @@ print(f"Resultado: {resultado}")  # Saída: ${cleanResult}`,
               className={`py-3 px-4 rounded-xl font-bold text-base transition-colors ${
                 operation === '*' ? 'bg-amber-400 text-slate-950' : 'bg-sky-950/80 hover:bg-sky-900/80 text-sky-300 border border-sky-800/60'
               }`}
+              title="Multiplicação (×)"
             >
               ×
             </button>
@@ -276,6 +298,7 @@ print(f"Resultado: {resultado}")  # Saída: ${cleanResult}`,
               className={`py-3 px-4 rounded-xl font-bold text-base transition-colors ${
                 operation === '-' ? 'bg-amber-400 text-slate-950' : 'bg-sky-950/80 hover:bg-sky-900/80 text-sky-300 border border-sky-800/60'
               }`}
+              title="Subtração (−)"
             >
               −
             </button>
@@ -304,6 +327,7 @@ print(f"Resultado: {resultado}")  # Saída: ${cleanResult}`,
               className={`py-3 px-4 rounded-xl font-bold text-base transition-colors ${
                 operation === '+' ? 'bg-amber-400 text-slate-950' : 'bg-sky-950/80 hover:bg-sky-900/80 text-sky-300 border border-sky-800/60'
               }`}
+              title="Adição (+)"
             >
               +
             </button>
@@ -324,6 +348,7 @@ print(f"Resultado: {resultado}")  # Saída: ${cleanResult}`,
             <button
               onClick={performCalculation}
               className="py-3.5 px-4 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold text-lg shadow-md transition-all active:scale-95"
+              title="Calcular resultado (=)"
             >
               =
             </button>
@@ -384,7 +409,7 @@ print(f"Resultado: {resultado}")  # Saída: ${cleanResult}`,
           <div className="p-4 bg-slate-900/40 border border-slate-800/70 rounded-xl space-y-2 text-xs text-slate-400">
             <span className="font-semibold text-slate-200">Como o Python processa:</span>
             <p className="leading-relaxed">
-              No Python, operações matemáticas como <code>+</code> e <code>*</code> são executadas sob o capô por métodos especiais como <code>__add__</code> e <code>__mul__</code>. Ao criar funções como <code>somar(a, b)</code>, você está encapsulando essa lógica para tornar o código legível e reutilizável.
+              No Python, operações matemáticas como <code>+</code> e <code>*</code> são executadas sob o capô por métodos especiais como <code>__add__</code> e <code>__mul__</code>. Ao criar funções como <code>somar(a, b)</code> ou <code>porcentagem(a, b)</code>, você está encapsulando essa lógica para tornar o código legível, modular e reutilizável.
             </p>
           </div>
         </div>
