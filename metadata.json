@@ -1,0 +1,6 @@
+{
+  "name": "PyCalc - Calculadora em Python & Guia Interativo",
+  "description": "Aprenda a criar uma calculadora em Python passo a passo com as quatro operações básicas, simulador interativo, código comentado e explicações detalhadas para iniciantes.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
